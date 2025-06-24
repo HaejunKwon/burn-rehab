@@ -43,6 +43,7 @@ def process_data(file):
     train_total=train_total.drop(labels="Onset",axis=1)
     train_total=train_total.drop(labels="입원일자",axis=1)
     train_total=train_total.drop(labels="skintest_1",axis=1)
+
     ex_test=train_total[336:]
     test = train_total[180:336]
     train = train_total[0:180] #서울대 부분 추출
@@ -136,6 +137,7 @@ def process_data(file):
     y_variables = [y0, y1, y2, y3, y4, y5, y6, y7, y8]
     y_variable_names = ['y0', 'y1', 'y2', 'y3', 'y4', 'y5', 'y6', 'y7', 'y8']
 
+    return train_data, test_data, ex_test, y_variables, y_variable_names
 
 import streamlit as st
 import pandas as pd
