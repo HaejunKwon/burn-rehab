@@ -13,8 +13,6 @@ def process_data(file):
     train_total = train_total.fillna(0)
 
     # Replace categorical columns with numeric values
-
-
     aa=train_total['Name'].unique().tolist()
     number=0
     for i in aa:
@@ -47,7 +45,7 @@ def process_data(file):
     ex_test=train_total[336:]
     test = train_total[180:336]
     train = train_total[0:180] #서울대 부분 추출
-    print(train.columns)
+    print(train_total.columns)
 
     train_data = train[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
     test_data = test[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
@@ -386,7 +384,7 @@ def main():
         st.write("데이터 미리보기", data.head())
 
         # ✅ process_data 함수 실행
-        train_data, test_data, ex_test_data, y_variables = process_data(uploaded_file)
+        train_data, test_data, ex_test_data, y_variables, y_variable_names = process_data(uploaded_file)
 
         # ✅ TableOne 생성
         group_col = st.selectbox("Group 기준 변수 선택", options=group_vars)
