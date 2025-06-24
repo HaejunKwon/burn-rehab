@@ -126,6 +126,16 @@ def process_data(file):
 
     print("Preprocessing Done")
 
+    y_variables = [(y0, y0_internal, y0_external, 'y0'),
+                (y1, y1_internal, y1_external, 'y1'),
+                (y2, y2_internal, y2_external, 'y2'),
+                (y3, y3_internal, y3_external, 'y3'),
+                (y4, y4_internal, y4_external, 'y4'),
+                (y5, y5_internal, y5_external, 'y5'),
+                (y6, y6_internal, y6_external, 'y6'),
+                (y7, y7_internal, y7_external, 'y7'),
+                (y8, y8_internal, y8_external, 'y8')]
+
     y_variable_names = ['y0', 'y1', 'y2', 'y3', 'y4', 'y5', 'y6', 'y7', 'y8']
 
     return train_data, test_data, ex_test, y_variables, y_variable_names
@@ -177,16 +187,6 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
     import shap
     from lime import lime_tabular
 
-    # 사용자가 설정한 y 변수 리스트에 대해 반복 실행
-    y_variables = [(y0, y0_internal, y0_external, 'y0'),
-                (y1, y1_internal, y1_external, 'y1'),
-                (y2, y2_internal, y2_external, 'y2'),
-                (y3, y3_internal, y3_external, 'y3'),
-                (y4, y4_internal, y4_external, 'y4'),
-                (y5, y5_internal, y5_external, 'y5'),
-                (y6, y6_internal, y6_external, 'y6'),
-                (y7, y7_internal, y7_external, 'y7'),
-                (y8, y8_internal, y8_external, 'y8')]
 
     warnings.filterwarnings('ignore')
     os.makedirs(save_dir, exist_ok=True)
