@@ -372,13 +372,42 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
             plot_radar_by_attack(results, y_name)
 
         with tab4:
-            shap_visualize(model, X_train, X_test, model_name, y_variable_names, attack_name)
-            
-        with tab5:
-            lime_visualize(model, X_train, X_test, feature_names, model_name, y_variable_names, attack_name)
+            st.markdown(f"### 🔍 SHAP Explanation for {y_name}")
+            model_choice = st.selectbox("🔧 SHAP 모델 선택", list(models.keys()), key=f"shap_model_{y_name}")
+            attack_choice = st.selectbox("⚔️ SHAP 공격 선택", list(attack_methods.keys()), key=f"shap_attack_{y_name}")
+            scenario_choice = st.selectbox("📊 SHAP 시나리오 선택", list(attack_scenarios.keys()), key=f"shap_scenario_{y_name}")
 
-    # 저장
-    df_results.to_csv(os.path.join(save_dir, "adversarial_results.csv"), index=False)
+            # 해당 조건에 맞는 데이터 준비
+            epsilon = attack_scenarios[scenario_choice]
+            attack_fn = attack_methods[attack_choice]
+            model = models[model_choice]
+            
+            X_train, X_test_split, y_train, y_test = train_test_split(X_proc, y_main, test_size=0.2, random_state=42)
+            X_adv = attack_fn(X_test_split, epsilon)
+            model.fit(X_train, y_train)
+
+            shap_visualize(model, X_train, X_test_split, model_choice, y_name, attack_choice)
+
+        with tab5:
+            st.markdown(f"### 🔍 LIME Explanation for {y_name}")
+            model_choice = st.selectbox("🔧 LIME 모델 선택", list(models.keys()), key=f"lime_model_{y_name}")
+            attack_choice = st.selectbox("⚔️ LIME 공격 선택", list(attack_methods.keys()), key=f"lime_attack_{y_name}")
+            scenario_choice = st.selectbox("📊 LIME 시나리오 선택", list(attack_scenarios.keys()), key=f"lime_scenario_{y_name}")
+
+            epsilon = attack_scenarios[scenario_choice]
+            attack_fn = attack_methods[attack_choice]
+            model = models[model_choice]
+            
+            X_train, X_test_split, y_train, y_test = train_test_split(X_proc, y_main, test_size=0.2, random_state=42)
+            X_adv = attack_fn(X_test_split, epsilon)
+            model.fit(X_train, y_train)
+
+            lime_visualize(model, X_train, X_test_split, feature_names, model_choice, y_name, attack_choice)
+
+            # 저장
+            df_results.to_csv(os.path.join(save_dir, "adversarial_results.csv"), index=False)
+
+
     return df_results
 
 
