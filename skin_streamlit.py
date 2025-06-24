@@ -190,6 +190,8 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
 
     warnings.filterwarnings('ignore')
     os.makedirs(save_dir, exist_ok=True)
+    
+    y_variable_names = ['y0', 'y1', 'y2', 'y3', 'y4', 'y5', 'y6', 'y7', 'y8']
 
     def remove_multicollinearity(df, thresh=5.0):
         variables = df.columns.tolist()
@@ -350,7 +352,7 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
 
         # ▶탭 구분 출력
         st.markdown(f"### 🎯 Target: {y_name}")
-        tab1, tab2, tab3 = st.tabs(["📋 결과 요약표", "📊 Heatmap", "📈 Radar Chart"])
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 결과 요약표", "📊 Heatmap", "📈 Radar Chart", "SHAP", "LIME"])
 
         with tab1:
             df_results = pd.DataFrame([
@@ -368,6 +370,12 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
 
         with tab3:
             plot_radar_by_attack(results, y_name)
+
+        with tab4:
+            shap_visualize(model, X_train, X_test, model_name, y_variable_names, attack_name)
+            
+        with tab5:
+            lime_visualize(model, X_train, X_test, feature_names, model_name, y_variable_names, attack_name)
 
     # 저장
     df_results.to_csv(os.path.join(save_dir, "adversarial_results.csv"), index=False)
