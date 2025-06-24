@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
 from tableone import TableOne
 import streamlit as st
 
@@ -113,10 +116,6 @@ def process_data(file):
     y8_internal = train_total['R7'].iloc[180:336].values
     y8_external = train_total['R7'].iloc[336:].values
     
-    import statsmodels.api as sm
-    import pandas as pd
-    import numpy as np
-
     train_data=train_data.astype('float')
     test_data=test_data.astype('float')
     ex_test=ex_test.astype('float')
@@ -134,9 +133,6 @@ def process_data(file):
 
     return train_data, test_data, ex_test, y_variables, y_variable_names
 
-import streamlit as st
-import pandas as pd
-from tableone import TableOne
 
 # 분석에 사용할 공통 컬럼
 columns = ["ID", "Name", "sex", "Age", "affected \nside", "Burn type",
@@ -168,13 +164,10 @@ def generate_table(data, column_name):
 
 def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir="./adversarial_results"):
     import os
-    import numpy as np
-    import pandas as pd
     import matplotlib.pyplot as plt
     import seaborn as sns
     import warnings
     import matplotlib as mpl
-    import streamlit as st
     from sklearn.preprocessing import StandardScaler
     from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, HistGradientBoostingRegressor
     from sklearn.tree import DecisionTreeRegressor
