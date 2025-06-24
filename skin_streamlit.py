@@ -39,6 +39,14 @@ def process_data(file):
         train_total['skintest site']=train_total['skintest site'].replace(i,number)
         number=number+1
 
+    train_total=train_total.drop(labels="STSG OP",axis=1)
+    train_total=train_total.drop(labels="Onset",axis=1)
+    train_total=train_total.drop(labels="입원일자",axis=1)
+    train_total=train_total.drop(labels="skintest_1",axis=1)
+    ex_test=train_total[336:]
+    test = train_total[180:336]
+    train = train_total[0:180] #서울대 부분 추출
+    print(train.columns)
 
     train_data = train[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
     test_data = test[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
