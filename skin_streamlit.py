@@ -84,7 +84,7 @@ def process_data(file):
     generate_tableone_and_display(train, 'R2', 'R2')
     generate_tableone_and_display(train, 'R6', 'R6')
     generate_tableone_and_display(train, 'R7', 'R7')
-    
+
     #classification
     y0=train_total['Thickness'].iloc[0:180].values # 엑셀 데이터에 'hypo' 열이 두 개여서 위치 기반으로 지정 (원래는 y0=train['hypo'].values)
     y0_internal = train_total['Thickness'].iloc[180:336].values
@@ -159,6 +159,8 @@ def generate_table(data, column_name):
                            file_name=f'tableone_{column_name}.csv')
     except Exception as e:
         st.error(f"Error generating TableOne for {column_name}: {e}")
+
+
 
 def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir="./adversarial_results"):
     import os
@@ -268,15 +270,16 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
     X_df_filtered, _ = remove_multicollinearity(X_df)
     feature_names = X_df_filtered.columns.tolist()
 
+    scaler = StandardScaler()
     for dset, name in zip([X, X_test, X_test_external], ['X', 'X_test', 'X_test_external']):
         d = pd.DataFrame(dset, columns=X_df.columns)[X_df_filtered.columns]
         d = np.delete(d.values, [0, 1, 4], axis=1)
         if name == 'X':
-            X_proc = StandardScaler().fit_transform(d)
+            X_proc = scaler.fit_transform(d)  # fit_transform 으로 fit + transform
         elif name == 'X_test':
-            X_test_proc = StandardScaler().transform(d)
+            X_test_proc = scaler.transform(d) # 이미 fit 된 scaler 사용
         else:
-            X_ex_test_proc = StandardScaler().transform(d)
+            X_ex_test_proc = scaler.transform(d) # 이미 fit 된 scaler 사용
 
     models = {
         'RandomForest': RandomForestRegressor(),
