@@ -1,5 +1,5 @@
-scipy
-streamlit
+scipy>=1.10.1
+statsmodels>=0.14.0
 pandas
 numpy
 scikit-learn
