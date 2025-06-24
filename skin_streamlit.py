@@ -3,6 +3,7 @@ import numpy as np
 import statsmodels.api as sm
 from tableone import TableOne
 import streamlit as st
+from io import StringIO
 
 def process_data(file):
     # Load the dataset
@@ -51,42 +52,39 @@ def process_data(file):
     test_data = test[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
     ex_test = ex_test[["ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
 
-    train_=train[['Thickness',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table1_test = TableOne(train_, groupby="Thickness", pval=True)
-    table1_test.to_csv('/content/skin/train_tableone_Thickness.csv', index=True)
+    def generate_tableone_and_display(train, group_var, label):
+        columns = ["ID", "Name", "sex", "Age", "affected \nside", "Burn type",
+                "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')", 'STSG',
+                'artificial dermis', 'skintest site', 'skintest_1_Thickness',
+                'skintest_1_Melanin', 'skintest_1_Erythema', 'skintest_1_TEWL',
+                'skintest_1_Sebum', 'skintest_1_R0', 'skintest_1_R2',
+                'skintest_1_R6', 'skintest_1_R7']
+        
+        df = train[[group_var] + columns]
+        table = TableOne(df, groupby=group_var, pval=True)
 
-    train_=train[['Melanin',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table1_test = TableOne(train_, groupby="Melanin", pval=True)
-    table1_test.to_csv('/content/skin/train_tableone_Melanin.csv', index=True)
+        st.subheader(f"TableOne - {label} 기준")
+        st.dataframe(table.tableone)
 
-    train_=train[['Erythema',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table1_test = TableOne(train_, groupby="Erythema", pval=True)
-    table1_test.to_csv('/content/skin/train_tableone_Erythema.csv', index=True)
-
-    train_=train[['TEWL',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table1_test = TableOne(train_, groupby="TEWL", pval=True)
-    table1_test.to_csv('/content/skin/train_tableone_TEWL.csv', index=True)
-
-    train_=train[['Sebum',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table1_test = TableOne(train_, groupby="Sebum", pval=True)
-    table1_test.to_csv('/content/skin/train_tableone_Sebum.csv', index=True)
-
-    train_=train[['R0',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table2_test = TableOne(train_, groupby="R0", pval=True)
-    table2_test.to_csv('/content/skin/train_tableone_R0.csv', index=True)
-
-    train_=train[['R2',"ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table3_test = TableOne(train_, groupby="R2", pval=True)
-    table3_test.to_csv('/content/skin/train_tableone_R2.csv', index=True)
-
-    train_=train[["R6","ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table4_test = TableOne(train_, groupby="R6", pval=True)
-    table4_test.to_csv('/content/skin/train_tableone_R6.csv', index=True)
-
-    train_=train[["R7","ID", "Name", "sex", "Age", "affected \nside","Burn type", "TBSA(Total)", "TBSA(2')", "TBSA(3')", "TBSA(4')",'STSG', 'artificial dermis', 'skintest site','skintest_1_Thickness','skintest_1_Melanin','skintest_1_Erythema','skintest_1_TEWL','skintest_1_Sebum','skintest_1_R0','skintest_1_R2','skintest_1_R6','skintest_1_R7']]
-    table5_test = TableOne(train_, groupby="R7", pval=True)
-    table5_test.to_csv('/content/skin/train_tableone_R7.csv', index=True)
-
+        # 다운로드용 CSV 스트링 만들기
+        csv = table.to_csv()
+        st.download_button(
+            label=f"📥 {label} 기준 TableOne CSV 다운로드",
+            data=csv,
+            file_name=f"tableone_{label}.csv",
+            mime="text/csv"
+        )
+    
+    generate_tableone_and_display(train, 'Thickness', 'Thickness')
+    generate_tableone_and_display(train, 'Melanin', 'Melanin')
+    generate_tableone_and_display(train, 'Erythema', 'Erythema')
+    generate_tableone_and_display(train, 'TEWL', 'TEWL')
+    generate_tableone_and_display(train, 'Sebum', 'Sebum')
+    generate_tableone_and_display(train, 'R0', 'R0')
+    generate_tableone_and_display(train, 'R2', 'R2')
+    generate_tableone_and_display(train, 'R6', 'R6')
+    generate_tableone_and_display(train, 'R7', 'R7')
+    
     #classification
     y0=train_total['Thickness'].iloc[0:180].values # 엑셀 데이터에 'hypo' 열이 두 개여서 위치 기반으로 지정 (원래는 y0=train['hypo'].values)
     y0_internal = train_total['Thickness'].iloc[180:336].values
