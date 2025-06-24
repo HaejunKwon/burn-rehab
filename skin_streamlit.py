@@ -374,31 +374,35 @@ def run_adversarial_evaluation(X, X_test, X_test_external, y_variables, save_dir
 
 
 
-# Streamlit 앱 설정
 def main():
     st.title("Data Processing and TableOne Generator")
     uploaded_file = st.file_uploader("Upload your dataset (.xlsx)", type=["xlsx"])
 
     if uploaded_file is not None:
-        data = pd.read_excel(uploaded_file)
-        st.write("데이터 미리보기", data.head())
+        try:
+            # 엑셀 확인
+            uploaded_file.seek(0)  # 중요!
+            data = pd.read_excel(uploaded_file)
+            st.write("데이터 미리보기", data.head())
 
-        # ✅ process_data 함수 실행
-        train_data, test_data, ex_test_data, y_variables, y_variable_names = process_data(uploaded_file)
+            # 다시 초기화해서 넘김
+            uploaded_file.seek(0)
+            train_data, test_data, ex_test_data, y_variables, y_variable_names = process_data(uploaded_file)
 
-        # ✅ TableOne 생성
-        group_col = st.selectbox("Group 기준 변수 선택", options=group_vars)
-        if st.button("TableOne 생성"):
-            generate_table(data, group_col)
+            # Group 기준 선택
+            group_vars = train_data.columns.tolist()
+            group_col = st.selectbox("Group 기준 변수 선택", options=group_vars)
 
-        # ✅ adversarial 평가 실행
-        if st.button("Start Adversarial Evaluation"):
-            df_result = run_adversarial_evaluation(train_data.values, test_data.values, ex_test_data.values, y_variables)
-            st.success("Adversarial Evaluation 완료")
-            st.dataframe(df_result.head())
+            if st.button("TableOne 생성"):
+                generate_table(data, group_col)
 
-    
+            if st.button("Start Adversarial Evaluation"):
+                df_result = run_adversarial_evaluation(train_data.values, test_data.values, ex_test_data.values, y_variables)
+                st.success("Adversarial Evaluation 완료")
+                st.dataframe(df_result.head())
 
+        except Exception as e:
+            st.error(f"❌ 오류 발생: {str(e)}")
 
 if __name__ == "__main__":
     main()
